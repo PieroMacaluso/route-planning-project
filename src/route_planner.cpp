@@ -37,10 +37,12 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node)
     current_node->FindNeighbors();
     for (auto node : current_node->neighbors)
     {
+        node->parent = current_node;
         node->h_value = this->CalculateHValue(node);
+        node->g_value = current_node->g_value + node->distance(*current_node);
         this->open_list.emplace_back(node);
+        node->visited = true;
     }
-    current_node->visited = true;
 }
 
 // Complete the NextNode method to sort the open list and return the next node.
@@ -101,11 +103,11 @@ void RoutePlanner::AStarSearch()
     RouteModel::Node *current_node = nullptr;
 
     current_node = this->start_node;
-    while (current_node != this->end_node)
+    open_list.push_back(current_node);
+    current_node->visited = true;
+    for (current_node = this->start_node; current_node != this->end_node; current_node = NextNode())
     {
         AddNeighbors(current_node);
-        current_node = NextNode();
     }
-    std::vector<RouteModel::Node> final_path = ConstructFinalPath(current_node);
-    this->m_Model.path = final_path;
+    this->m_Model.path = ConstructFinalPath(current_node);
 }

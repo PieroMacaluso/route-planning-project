@@ -74,7 +74,6 @@ int main(int argc, const char **argv)
             valid = true;
         }
     }
-    std::cout << start_x << start_y << end_x << end_y << std::endl;
 
     // Build Model.
     RouteModel model{osm_data};
